@@ -38,7 +38,8 @@ if uploaded_file is not None:
                            'Sepia / Vintage',
                            'Vignette Effect',
                            'Pencil Sketch',
-                           'Cartoon Image'
+                           'Cartoon Image',
+                           "Sepia & Vigette"
                            ))
 
     # Define columns for thumbnail images.
@@ -58,6 +59,7 @@ if uploaded_file is not None:
     with col5:
         st.caption("Cartoon Image")
         st.image(r"cartoon_image.png")
+    
 
     # Flag for showing output image.
     output_flag = 1
@@ -82,6 +84,9 @@ if uploaded_file is not None:
         color = 'GRAY'
     elif option == 'Cartoon Image':
         output = convert_to_cartoon(img)
+    elif option == "Sepia & Vigette":
+        level = st.slider('level', 0, 5, 2)
+        output = sepiaAndvigette(img,level)
 
     with output_col:
         if output_flag == 1:
