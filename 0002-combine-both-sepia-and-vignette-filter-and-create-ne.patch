@@ -1,0 +1,168 @@
+From dafec89471d5e8f789c403b2d5ad0198b32f7488 Mon Sep 17 00:00:00 2001
+From: hi-sushanta <iamchi@skiff.com>
+Date: Wed, 15 May 2024 20:38:23 +0530
+Subject: [PATCH 2/2] combine both sepia and vignette filter and create new
+ option
+
+---
+ Image_Filter_App.py                 |   7 ++++++-
+ __pycache__/filters.cpython-311.pyc | Bin 0 -> 4109 bytes
+ filters.py                          |  23 +++++++++++++++--------
+ 3 files changed, 21 insertions(+), 9 deletions(-)
+ create mode 100644 __pycache__/filters.cpython-311.pyc
+
+diff --git a/Image_Filter_App.py b/Image_Filter_App.py
+index 746acd3..6f13fa5 100644
+--- a/Image_Filter_App.py
++++ b/Image_Filter_App.py
+@@ -38,7 +38,8 @@ if uploaded_file is not None:
+                            'Sepia / Vintage',
+                            'Vignette Effect',
+                            'Pencil Sketch',
+-                           'Cartoon Image'
++                           'Cartoon Image',
++                           "Sepia & Vigette"
+                            ))
+ 
+     # Define columns for thumbnail images.
+@@ -58,6 +59,7 @@ if uploaded_file is not None:
+     with col5:
+         st.caption("Cartoon Image")
+         st.image(r"cartoon_image.png")
++    
+ 
+     # Flag for showing output image.
+     output_flag = 1
+@@ -82,6 +84,9 @@ if uploaded_file is not None:
+         color = 'GRAY'
+     elif option == 'Cartoon Image':
+         output = convert_to_cartoon(img)
++    elif option == "Sepia & Vigette":
++        level = st.slider('level', 0, 5, 2)
++        output = sepiaAndvigette(img,level)
+ 
+     with output_col:
+         if output_flag == 1:
+diff --git a/__pycache__/filters.cpython-311.pyc b/__pycache__/filters.cpython-311.pyc
+new file mode 100644
+index 0000000000000000000000000000000000000000..d6408142be03b3321b43340b88d884db05c36625
+GIT binary patch
+literal 4109
+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
+
+literal 0
+HcmV?d00001
+
+diff --git a/filters.py b/filters.py
+index 20309ba..6d46847 100644
+--- a/filters.py
++++ b/filters.py
+@@ -3,13 +3,13 @@ import numpy as np
+ import streamlit as st
+ 
+ 
+-@st.cache
++@st.cache_data
+ def bw_filter(img):
+     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+     return img_gray
+ 
+ 
+-@st.cache
++@st.cache_data
+ def vignette(img, level=2):
+     height, width = img.shape[:2]
+ 
+@@ -30,7 +30,7 @@ def vignette(img, level=2):
+     return img_vignette
+ 
+ 
+-@st.cache
++@st.cache_data
+ def sepia(img):
+     img_sepia = img.copy()
+     # Converting to RGB as sepia matrix below is for RGB.
+@@ -46,16 +46,17 @@ def sepia(img):
+     return img_sepia
+ 
+ 
+-@st.cache
+-def pencil_sketch(img, ksize=5):
++@st.cache_data
++def pencil_sketch(img, ksize=3):
+     img_blur = cv2.GaussianBlur(img, (ksize, ksize), 0, 0)
+     img_sketch, _ = cv2.pencilSketch(img_blur)
+     return img_sketch
+ 
+ 
+-@st.cache
++@st.cache_data
+ def convert_to_cartoon(img):
+-    image_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
++    image_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
++    image_gray = cv2.cvtColor(image_rgb,cv2.COLOR_RGB2GRAY)
+ 
+     # apply gaussian blur
+     img_blur = cv2.GaussianBlur(image_gray, (3, 3), 0)
+@@ -66,9 +67,15 @@ def convert_to_cartoon(img):
+     ret, edgeImage = cv2.threshold(edgeImage, 150, 255, cv2.THRESH_BINARY)
+ 
+     # blur images heavily using edgePreservingFilter
+-    edgePreservingImage = cv2.edgePreservingFilter(img, flags=2, sigma_s=50, sigma_r=0.4)
++    edgePreservingImage = cv2.edgePreservingFilter(img, flags=3, sigma_s=50, sigma_r=0.4)
+ 
+     # combine cartoon image and edges image
+     output = cv2.bitwise_and(edgePreservingImage, edgePreservingImage, mask=edgeImage)
+ 
+     return output
++
++@st.cache_data
++def sepiaAndvigette(img,level=2):
++    img = sepia(img)
++    img = vignette(img,level)
++    return img
+-- 
+2.43.0.windows.1
+

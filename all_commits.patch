@@ -1,0 +1,104 @@
+diff --git a/Image_Filter_App.py b/Image_Filter_App.py
+index 746acd3..6f13fa5 100644
+--- a/Image_Filter_App.py
++++ b/Image_Filter_App.py
+@@ -38,7 +38,8 @@ if uploaded_file is not None:
+                            'Sepia / Vintage',
+                            'Vignette Effect',
+                            'Pencil Sketch',
+-                           'Cartoon Image'
++                           'Cartoon Image',
++                           "Sepia & Vigette"
+                            ))
+ 
+     # Define columns for thumbnail images.
+@@ -58,6 +59,7 @@ if uploaded_file is not None:
+     with col5:
+         st.caption("Cartoon Image")
+         st.image(r"cartoon_image.png")
++    
+ 
+     # Flag for showing output image.
+     output_flag = 1
+@@ -82,6 +84,9 @@ if uploaded_file is not None:
+         color = 'GRAY'
+     elif option == 'Cartoon Image':
+         output = convert_to_cartoon(img)
++    elif option == "Sepia & Vigette":
++        level = st.slider('level', 0, 5, 2)
++        output = sepiaAndvigette(img,level)
+ 
+     with output_col:
+         if output_flag == 1:
+diff --git a/__pycache__/filters.cpython-311.pyc b/__pycache__/filters.cpython-311.pyc
+new file mode 100644
+index 0000000..d640814
+Binary files /dev/null and b/__pycache__/filters.cpython-311.pyc differ
+diff --git a/filters.py b/filters.py
+index 20309ba..6d46847 100644
+--- a/filters.py
++++ b/filters.py
+@@ -3,13 +3,13 @@ import numpy as np
+ import streamlit as st
+ 
+ 
+-@st.cache
++@st.cache_data
+ def bw_filter(img):
+     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+     return img_gray
+ 
+ 
+-@st.cache
++@st.cache_data
+ def vignette(img, level=2):
+     height, width = img.shape[:2]
+ 
+@@ -30,7 +30,7 @@ def vignette(img, level=2):
+     return img_vignette
+ 
+ 
+-@st.cache
++@st.cache_data
+ def sepia(img):
+     img_sepia = img.copy()
+     # Converting to RGB as sepia matrix below is for RGB.
+@@ -46,16 +46,17 @@ def sepia(img):
+     return img_sepia
+ 
+ 
+-@st.cache
+-def pencil_sketch(img, ksize=5):
++@st.cache_data
++def pencil_sketch(img, ksize=3):
+     img_blur = cv2.GaussianBlur(img, (ksize, ksize), 0, 0)
+     img_sketch, _ = cv2.pencilSketch(img_blur)
+     return img_sketch
+ 
+ 
+-@st.cache
++@st.cache_data
+ def convert_to_cartoon(img):
+-    image_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
++    image_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
++    image_gray = cv2.cvtColor(image_rgb,cv2.COLOR_RGB2GRAY)
+ 
+     # apply gaussian blur
+     img_blur = cv2.GaussianBlur(image_gray, (3, 3), 0)
+@@ -66,9 +67,15 @@ def convert_to_cartoon(img):
+     ret, edgeImage = cv2.threshold(edgeImage, 150, 255, cv2.THRESH_BINARY)
+ 
+     # blur images heavily using edgePreservingFilter
+-    edgePreservingImage = cv2.edgePreservingFilter(img, flags=2, sigma_s=50, sigma_r=0.4)
++    edgePreservingImage = cv2.edgePreservingFilter(img, flags=3, sigma_s=50, sigma_r=0.4)
+ 
+     # combine cartoon image and edges image
+     output = cv2.bitwise_and(edgePreservingImage, edgePreservingImage, mask=edgeImage)
+ 
+     return output
++
++@st.cache_data
++def sepiaAndvigette(img,level=2):
++    img = sepia(img)
++    img = vignette(img,level)
++    return img
